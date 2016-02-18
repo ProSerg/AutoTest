@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="AutoTest:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/AutoTest_jar</output-path>
+    <root id="archive" name="AutoTest.jar">
+      <element id="module-output" name="AutoTest" />
+    </root>
+  </artifact>
+</component>
