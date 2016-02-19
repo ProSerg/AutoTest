@@ -1,23 +1,22 @@
 package ru.home;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import junit.framework.TestCase;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 public class ChromeDriverTest extends Assert {
+    final static String chromdriver = "C:\\Users\\markin\\IdeaProjects\\AutoTest\\exec\\chromedriver.exe"; //FIXME
     private static ChromeDriverService service;
     public static WebDriver driver;
     static File chrome;
@@ -30,7 +29,7 @@ public class ChromeDriverTest extends Assert {
 
     @BeforeClass
     public static void AndStartSecreatervice() throws IOException {
-        chrome= new File("E:\\workspace\\libexec\\chromedriver.exe");
+        chrome= new File(chromdriver);
         System.out.println("File:" + chrome);
         service = new ChromeDriverService.Builder()
                 .usingDriverExecutable(chrome)
