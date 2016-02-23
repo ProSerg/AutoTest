@@ -1,12 +1,7 @@
-package ru.home;
+package ru.home.core;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by smarkin on 18.02.2016.
@@ -30,19 +25,19 @@ public class LogInForm extends Form {
         InputPassword = new Input(driver,By.cssSelector(PASSWORD_SELECTOR));
     }
 
-    Page Submit() {
+    public Page Submit() {
         Submit.Click();
         return new Page(this.driver,this.driver.getTitle());
     }
 
-    String getLogError() {
+    public String getLogError() {
         logError.getElement();
         Sleep(1);
         // решить проблему с таймоутом.
         return logError.getText();
     }
 
-    void fill() {
+    public void fill() {
         InputUsername.SendKeys(this.username);
         InputPassword.SendKeys(this.password);
     }
@@ -63,11 +58,11 @@ public class LogInForm extends Form {
         return new Page(this.driver,"");
     }
 
-    void setUsername( String username ) {
+    public void setUsername(String username) {
         this.username=username;
     }
 
-    void setPassword( String password ) {
+    public void setPassword(String password) {
         this.password=password;
     }
 }

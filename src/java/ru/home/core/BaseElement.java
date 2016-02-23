@@ -1,4 +1,4 @@
-package ru.home;
+package ru.home.core;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;

@@ -1,4 +1,4 @@
-package ru.home;
+package ru.home.core;
 
 import org.openqa.selenium.WebDriver;
 
@@ -13,7 +13,7 @@ abstract public class Form extends BaseElement {
 
     abstract Page Submit() ;
 
-    abstract void fill();
+    public abstract void fill();
 
     abstract Button getSubmitButton();
 

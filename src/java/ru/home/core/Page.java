@@ -1,4 +1,4 @@
-package ru.home;
+package ru.home.core;
 
 import org.openqa.selenium.WebDriver;
 
@@ -12,7 +12,7 @@ public class Page extends BaseElement {
         this.title=title;
     }
 
-    String Goto () {
+    public String Goto() {
         driver.get(title);
         return driver.getTitle();
     }

@@ -1,4 +1,4 @@
-package ru.home;
+package ru.home.core;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -11,16 +11,16 @@ import java.util.concurrent.TimeUnit;
 public class WebMaker {
     private WebDriver driver;
 
-    WebMaker( WebDriver driver) {
+    public WebMaker(WebDriver driver) {
         this.driver = driver;
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
     }
 
-    Button getButton ( String locator) {
+    public Button getButton(String locator) {
         return new Button(this.driver, By.cssSelector(locator));
     }
 
-    Page getPage (String address) {
+    public Page getPage(String address) {
         return new Page(this.driver,address);
     }
 
@@ -28,7 +28,7 @@ public class WebMaker {
         return new Link(this.driver, By.cssSelector(locator));
     }
 
-    BaseElement getElement (String locator) {
+    public BaseElement getElement(String locator) {
         return new BaseElement(this.driver, By.cssSelector(locator));
     }
 }
