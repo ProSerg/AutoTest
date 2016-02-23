@@ -1,5 +1,6 @@
-package ru.home;
+package ru.home.test;
 
+import junit.framework.TestCase;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -10,13 +11,17 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import ru.home.core.*;;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class ChromeDriverTest extends Assert {
-    final static String chromdriver = "C:\\Users\\markin\\IdeaProjects\\AutoTest\\exec\\chromedriver.exe"; //FIXME
+import static org.junit.Assert.*;
+
+
+public class ChromeDriverTest extends TestCase {
+    final static String chromdriver = "E:\\workspace\\libexec\\chromedriver.exe"; //FIXME
     private static ChromeDriverService service;
     public static WebDriver driver;
     static File chrome;
@@ -28,7 +33,8 @@ public class ChromeDriverTest extends Assert {
     public ChromeDriverTest () {}
 
     @BeforeClass
-    public static void AndStartSecreatervice() throws IOException {
+    public static void AndStartSecreatervice() throws Exception {
+        System.out.println("BeforeClass");
         chrome= new File(chromdriver);
         System.out.println("File:" + chrome);
         service = new ChromeDriverService.Builder()
@@ -39,7 +45,8 @@ public class ChromeDriverTest extends Assert {
     }
 
     @BeforeClass
-    public static void setUp(){
+    public void setUp() throws Exception {
+        System.out.println("BeforeClass SetUp");
         driver = new RemoteWebDriver(service.getUrl(),
                 DesiredCapabilities.chrome());
 
@@ -64,7 +71,7 @@ public class ChromeDriverTest extends Assert {
     }
 
     @AfterClass
-    public static void tearDown(){
+    public void tearDown() throws Exception {
         driver.quit();
     }
 
@@ -75,7 +82,6 @@ public class ChromeDriverTest extends Assert {
 
     @Test
     public void testBase() throws InterruptedException {
-
         MainPage.Goto();
         assertEquals("Вход", buttonLogIn.Click());
         BaseElement.Sleep(1);
@@ -84,7 +90,6 @@ public class ChromeDriverTest extends Assert {
 
     @Test
     public void testForm() throws InterruptedException {
-
         logInForm.setUsername("test");
         logInForm.setPassword("1q2w3e4r");
         logInForm.fill();
@@ -93,5 +98,11 @@ public class ChromeDriverTest extends Assert {
         BaseElement.Sleep(1);
 
     }
+
+    @Test
+    public void testPrintMessage() {
+        assertEquals("1","1");
+    }
+
 
 }
