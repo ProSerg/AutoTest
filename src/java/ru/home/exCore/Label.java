@@ -3,8 +3,6 @@ package ru.home.exCore;
 /**
  * Created by smarkin on 24.02.2016.
  */
-
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
