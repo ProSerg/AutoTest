@@ -1,35 +1,30 @@
 package ru.home.test;
 
 import junit.framework.TestCase;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.jboss.netty.handler.codec.embedder.EncoderEmbedder;
+import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import ru.home.core.*;;
+import ru.home.exCore.*;;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.*;
 
-
-public class ChromeDriverTest extends TestCase {
+public class ChromeDriverTest extends Assert {
     final static String chromdriver = "E:\\workspace\\libexec\\chromedriver.exe"; //FIXME
     private static ChromeDriverService service;
     public static WebDriver driver;
     static File chrome;
 
-    static Page MainPage;
-    static Button buttonLogIn;
-    static BaseElement enterActive;
-    static LogInForm logInForm;
+    Button Enter;
+    Input  lineSearch;
+
     public ChromeDriverTest () {}
 
     @BeforeClass
@@ -44,23 +39,15 @@ public class ChromeDriverTest extends TestCase {
         service.start();
     }
 
-    @BeforeClass
+    @Before
     public void setUp() throws Exception {
         System.out.println("BeforeClass SetUp");
         driver = new RemoteWebDriver(service.getUrl(),
                 DesiredCapabilities.chrome());
-
-        WebMaker webMaker = new WebMaker(driver);
-        MainPage = webMaker.getPage("http://socialkey.ru");
-        buttonLogIn = webMaker.getButton("body > header > div > div.menu.pull-right > a.btn.btn-success.log-in");
-        enterActive = webMaker.getElement("#enter");
-        logInForm = new LogInForm(driver, By.cssSelector("#do-login"));
     }
 
 
     public static void simpleTest() {
-
-
         driver.get("http://internetka.in.ua");
         WebElement enterActive = driver.findElement(By.cssSelector("#enter") );
         assertEquals("Вход", enterActive.findElement(By.tagName("h2")).getText() );
@@ -70,39 +57,22 @@ public class ChromeDriverTest extends TestCase {
         }
     }
 
-    @AfterClass
+    @After
     public void tearDown() throws Exception {
         driver.quit();
     }
 
-
+    @AfterClass
     public static void createAndStopService() {
         service.stop();
     }
 
     @Test
     public void testBase() throws InterruptedException {
-        MainPage.Goto();
-        assertEquals("Вход", buttonLogIn.Click());
-        BaseElement.Sleep(1);
-
+        driver.get("http://socialkey.ru/");
+        Enter = new Button(driver,HTMLElement.SearchBy.CSS_SELECTOR,"body > header > div > div.menu.pull-right > a.btn.btn-success.log-in");
+        System.out.println("Bool:"+Enter.isEnabled());
+        Enter.click();
     }
-
-    @Test
-    public void testForm() throws InterruptedException {
-        logInForm.setUsername("test");
-        logInForm.setPassword("1q2w3e4r");
-        logInForm.fill();
-        logInForm.Submit();
-        assertEquals("Неправильный логин или пароль.", logInForm.getLogError());
-        BaseElement.Sleep(1);
-
-    }
-
-    @Test
-    public void testPrintMessage() {
-        assertEquals("1","1");
-    }
-
 
 }
