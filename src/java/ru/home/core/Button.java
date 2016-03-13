@@ -1,21 +1,18 @@
 package ru.home.core;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-
 /**
- * Created by smarkin on 17.02.2016.
+ * Created by smarkin on 24.02.2016.
  */
-public class Button extends BaseElement {
-    String text;
-    public Button (WebDriver driver, By locator) {
-        super(driver,locator);
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
+public class Button extends HTMLElement {
+
+    public Button(final WebDriver driver, final SearchBy elementSearchCriteria,String elementValue) {
+        super(driver, elementSearchCriteria, elementValue);
     }
 
-    public String Click () {
-        this.element= getElement(locator);
-        text = this.element.getText();
-        this.element.click();
-        return text;
+    public void click() {
+        waitUntil(ExpectedConditions::elementToBeClickable).click();
     }
 }

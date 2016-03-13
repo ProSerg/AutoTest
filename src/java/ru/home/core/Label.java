@@ -1,4 +1,4 @@
-package ru.home.exCore;
+package ru.home.core;
 
 /**
  * Created by smarkin on 24.02.2016.

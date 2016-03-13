@@ -1,22 +1,41 @@
 package ru.home.core;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-
 /**
- * Created by smarkin on 18.02.2016.
+ * Created by smarkin on 24.02.2016.
  */
-public class Input extends BaseElement {
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
-    public Input(WebDriver driver, By locator) {
-        super(driver, locator);
+public class Input extends HTMLElement {
+    private WebElement element;
+    public Input(final WebDriver driver, final SearchBy elementSearchCriteria, final String elementValue) {
+        super(driver, elementSearchCriteria, elementValue);
     }
 
-    public Integer SendKeys (String keys) {
-        //this.element = driver.findElement(locator);
-        this.element = getElement();
-        this.element.click();
-        this.element.sendKeys(keys);
-        return this.element.getText().length();
+    public void SendKeys(CharSequence text) {
+        SendKeys(text, true);
+    }
+
+    public void clearInput() {
+        waitUntil(ExpectedConditions::elementToBeClickable).clear();
+    }
+
+    public void SendKeys(CharSequence text, final boolean clear) {
+        if (clear) {
+            clearInput();
+        }
+        element = waitUntil(ExpectedConditions::elementToBeClickable);
+        try {
+            element.sendKeys(text);
+        } catch ( WebDriverException e ) {
+            System.out.printf( "%s( %s ): %s ", this.getClass(),this.getElementValue() , "keys should be a string");
+            System.out.println();
+        }
+    }
+
+    public void submit() {
+        element.submit();
     }
 }

@@ -1,4 +1,4 @@
-package ru.home.exCore;
+package ru.home.core;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * Created by smarkin on 24.02.2016.

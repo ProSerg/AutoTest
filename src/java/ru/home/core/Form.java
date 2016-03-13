@@ -3,19 +3,19 @@ package ru.home.core;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Created by smarkin on 17.02.2016.
+ * Created by smarkin on 12.03.2016.
  */
-abstract public class Form extends BaseElement {
+abstract public class Form extends HTMLElement {
     Button submitButton;
-    Form( WebDriver driver  ) {
-        super(driver);
+    public Form(WebDriver driver, SearchBy elementSearchCriteria, String elementValue) {
+        super(driver,elementSearchCriteria,elementValue);
     }
 
-    abstract Page Submit() ;
+    abstract public void Submit() ;
 
-    public abstract void fill();
+    public abstract void fill(String ... args );
 
-    abstract Button getSubmitButton();
+//    abstract Button getSubmitButton();
 
-    abstract Page getPageAfterSubmit();
+//    abstract void getPageAfterSubmit();
 }
