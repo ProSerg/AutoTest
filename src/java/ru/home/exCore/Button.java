@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class Button extends HTMLElement {
 
-    public Button(final WebDriver driver, final SearchBy elementSearchCriteria, final String elementValue) {
+    public Button(final WebDriver driver, final SearchBy elementSearchCriteria,String elementValue) {
         super(driver, elementSearchCriteria, elementValue);
     }
 
