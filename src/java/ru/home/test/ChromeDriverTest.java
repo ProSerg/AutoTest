@@ -10,7 +10,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.home.common.ConfigValue;
 import ru.home.common.Locators;
 import ru.home.common.TestParameters;
-import ru.home.exCore.*;
+import ru.home.core.*;
 import ru.home.objects.LogInForm;
 
 import java.io.File;

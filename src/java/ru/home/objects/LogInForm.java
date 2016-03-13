@@ -2,10 +2,10 @@ package ru.home.objects;
 
 import org.openqa.selenium.WebDriver;
 import ru.home.common.Locators;
-import ru.home.exCore.Button;
-import ru.home.exCore.Form;
-import ru.home.exCore.Input;
-import ru.home.exCore.Label;
+import ru.home.core.Button;
+import ru.home.core.Form;
+import ru.home.core.Input;
+import ru.home.core.Label;
 
 
 /**
