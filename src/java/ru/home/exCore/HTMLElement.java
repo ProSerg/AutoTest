@@ -1,9 +1,6 @@
 package ru.home.exCore;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -14,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Created by smarkin on 24.02.2016.
@@ -41,8 +39,9 @@ public class HTMLElement extends By {
 
     private static final long DEFAULT_TIMEOUT = 5;
 
+    private Predicate<WebDriver> refresh;
 
-    public HTMLElement(final WebDriver driver, final SearchBy elementSearchCriteria, final String elementValue) {
+    public HTMLElement(final WebDriver driver, SearchBy elementSearchCriteria, String elementValue) {
         this.elementSearchCriteria = elementSearchCriteria;
         this.elementValue = elementValue;
 
@@ -70,6 +69,28 @@ public class HTMLElement extends By {
     public boolean isEnabled() {
         return waitUntil(ExpectedConditions::visibilityOfElementLocated).isEnabled();
     }
+
+    public boolean isRefreshed (String text) {
+        try {
+            wait.until(ExpectedConditions.refreshed(ExpectedConditions.invisibilityOfElementWithText(getLocator(),text)));
+            return true;
+        }catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    public Boolean isWaitUntil(Function<By, ExpectedCondition<Boolean>> condition) {
+        return isWaitUntil(condition, Optional.<Long>empty());
+    }
+
+    public Boolean isWaitUntil(Function<By, ExpectedCondition<Boolean>> condition, final Optional<Long> timeout) {
+        try {
+            return getWait(timeout).until(condition.apply(getLocator()));
+        } catch (Exception e) {
+            throw new AssertionError("Unable to find element by " + getElementSearchCriteria() + " = \"" + getElementValue() + "\"", e);
+        }
+    }
+
 
     public WebElement waitUntil(final Function<By, ExpectedCondition<WebElement>> condition) {
         return waitUntil(condition, Optional.<Long>empty());
