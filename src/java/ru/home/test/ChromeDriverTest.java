@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 @RunWith(Parameterized.class)
 public class ChromeDriverTest extends Assert {
-    final static String chromdriver = ConfigValue.getValue("chromdriver"); //FIXME
+    final static String chromdriver = ConfigValue.getValue("chromdriver");
     private static ChromeDriverService service;
     public static WebDriver driver;
     static File chrome;
