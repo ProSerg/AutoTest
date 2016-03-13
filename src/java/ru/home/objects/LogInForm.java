@@ -1,15 +1,12 @@
 package ru.home.objects;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import ru.home.common.Locators;
 import ru.home.exCore.Button;
 import ru.home.exCore.Form;
 import ru.home.exCore.Input;
 import ru.home.exCore.Label;
 
-import java.util.Optional;
 
 /**
  * Created by smarkin on 12.03.2016.
