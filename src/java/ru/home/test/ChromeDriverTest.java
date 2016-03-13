@@ -3,9 +3,7 @@ package ru.home.test;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -13,22 +11,20 @@ import ru.home.common.ConfigValue;
 import ru.home.common.Locators;
 import ru.home.common.TestParameters;
 import ru.home.exCore.*;
-import ru.home.objects.LogInForm;;
+import ru.home.objects.LogInForm;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(Parameterized.class)
 public class ChromeDriverTest extends Assert {
-    final static String chromdriver = ConfigValue.getValue("chromdriver");
+    final static String SITE = "site.sk";
+    final static String CHROMDRIVER = ConfigValue.getValue("chromdriver");
     private static ChromeDriverService service;
     public static WebDriver driver;
     static File chrome;
-    private static ConfigValue config;
-    private static TestParameters parameters;
     private String inputLogin,inputPass,expectedResult;
     Button Enter;
     LogInForm loginForm;
@@ -39,11 +35,9 @@ public class ChromeDriverTest extends Assert {
         this.expectedResult = expected;
     }
 
-    // {input, result }
    @Parameterized.Parameters
     public static Collection primeNumbers() throws IOException {
-        parameters = new TestParameters("/parameters.properties");
-        return parameters.getValue("Enter.testLight"); //testMain
+        return new TestParameters("/parameters.properties").getValue("Enter.testLight"); //testMain
     }
 
 
@@ -51,7 +45,7 @@ public class ChromeDriverTest extends Assert {
     @BeforeClass
     public static void AndStartSecreatervice() throws Exception {
         System.out.println("BeforeClass");
-        chrome= new File(chromdriver);
+        chrome= new File(CHROMDRIVER);
         System.out.println("File:" + chrome);
         service = new ChromeDriverService.Builder()
                 .usingDriverExecutable(chrome)
@@ -74,17 +68,6 @@ public class ChromeDriverTest extends Assert {
         loginForm = new LogInForm(driver,HTMLElement.SearchBy.CSS_SELECTOR,Locators.get("LoginPage.Form"));
     }
 
-
-    public static void simpleTest() {
-        driver.get("http://internetka.in.ua");
-        WebElement enterActive = driver.findElement(By.cssSelector("#enter") );
-        assertEquals("Вход", enterActive.findElement(By.tagName("h2")).getText() );
-        List<WebElement> list = enterActive.findElements(By.cssSelector("div#enter * "));
-        for(WebElement el : list ) {
-            System.out.println(el.getTagName() + " " + el.getTagName());
-        }
-    }
-
     @After
     public void tearDown() throws Exception {
         driver.quit();
@@ -98,7 +81,7 @@ public class ChromeDriverTest extends Assert {
 
     @Test
     public void testBase() throws InterruptedException {
-        driver.get( ConfigValue.getValue("site") );
+        driver.get( ConfigValue.getValue(SITE) );
         System.out.println("Bool:"+Enter.isEnabled());
         Enter.click();
         loginForm.fill(inputLogin,inputPass);
