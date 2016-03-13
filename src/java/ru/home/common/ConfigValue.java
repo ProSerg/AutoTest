@@ -7,17 +7,12 @@ import java.util.Properties;
  * Created by smarkin on 12.03.2016.
  */
 public class ConfigValue {
-    private Properties properties;
-    private String resource ;
-    private InputStream is;
+    private static Properties properties;
+    private static String resource = "/config.properties";
+    private static InputStream is;
 
-    public  ConfigValue (String resource) {
+    static {
         properties = new Properties();
-        this.setResource(resource);
-    }
-
-    public void  setResource(String resource) {
-        this.resource = resource;
         is = Locators.class.getResourceAsStream(resource);
         try {
             properties.load(is);
@@ -26,11 +21,11 @@ public class ConfigValue {
         }
     }
 
-    public String getResource() {
+    public static String getResource() {
         return resource;
     }
 
-    public String getValue(String name) {
+    public static String getValue(String name) {
         return properties.getProperty(name);
     }
 
