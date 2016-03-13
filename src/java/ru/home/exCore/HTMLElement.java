@@ -39,7 +39,6 @@ public class HTMLElement extends By {
 
     private static final long DEFAULT_TIMEOUT = 5;
 
-    private Predicate<WebDriver> refresh;
 
     public HTMLElement(final WebDriver driver, SearchBy elementSearchCriteria, String elementValue) {
         this.elementSearchCriteria = elementSearchCriteria;
