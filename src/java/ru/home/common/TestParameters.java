@@ -15,7 +15,7 @@ public class TestParameters {
     private Properties properties;
     private String resource ;
     private InputStream is;
-    InputStreamReader reader = null;
+    InputStreamReader reader;
 
     public TestParameters(String resource) throws IOException {
         properties = new Properties();

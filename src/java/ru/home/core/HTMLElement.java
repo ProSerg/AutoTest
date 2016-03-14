@@ -35,6 +35,7 @@ public class HTMLElement extends By {
 
     private String elementValue;
     private SearchBy elementSearchCriteria;
+    private WebDriver driver;
 
     private static final long DEFAULT_TIMEOUT = 5;
 
@@ -42,7 +43,7 @@ public class HTMLElement extends By {
     public HTMLElement(final WebDriver driver, SearchBy elementSearchCriteria, String elementValue) {
         this.elementSearchCriteria = elementSearchCriteria;
         this.elementValue = elementValue;
-
+        this.driver = driver;
         if (driver != null) {
             this.wait = new WebDriverWait(driver, DEFAULT_TIMEOUT);
         }
@@ -54,6 +55,14 @@ public class HTMLElement extends By {
 
     public By getLocator() {
         return locator;
+    }
+
+    public WebElement getElement () {
+        return driver.findElement(locator);
+    }
+
+    public WebDriver getDriver() {
+        return this.driver;
     }
 
     public String getElementValue() {
@@ -138,6 +147,6 @@ public class HTMLElement extends By {
 
     @Override
     public List<WebElement> findElements(final SearchContext searchContext) {
-        return new ArrayList<>();
+        return driver.findElements(locator);
     }
 }

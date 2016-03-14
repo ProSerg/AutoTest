@@ -10,8 +10,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.home.common.ConfigValue;
 import ru.home.common.Locators;
 import ru.home.common.TestParameters;
-import ru.home.core.*;
-import ru.home.objects.LogInForm;
+import ru.home.core.Page;
+import ru.home.objects.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,14 +20,20 @@ import java.util.concurrent.TimeUnit;
 
 @RunWith(Parameterized.class)
 public class PriceTest extends Assert {
-    final static String SITE = "site.price";
     final static String CHROMDRIVER = ConfigValue.getValue("chromdriver");
     private static ChromeDriverService service;
     public static WebDriver driver;
     static File chrome;
     private String inputLogin,inputPass,expectedResult;
-    Button Enter;
-    LogInForm loginForm;
+
+    TabRecommend tabRecommend;
+    TabAdditional tabAdditional;
+    TabAssessments tabAssessments;
+    TabDbAccess tabDbAccess;
+    TabPublications tabPublications;
+    PriceCart priceCart;
+
+    PricePage pricePage;
 
     public  PriceTest(String name,String pass, String expected) {
         this.inputLogin = name;
@@ -43,10 +49,9 @@ public class PriceTest extends Assert {
 
 
     @BeforeClass
-    public static void AndStartSecreatervice() throws Exception {
-        System.out.println("BeforeClass");
+    public static void StartSecreatervice() throws Exception {
+        System.out.println("StartSecreatervice");
         chrome= new File(CHROMDRIVER);
-        System.out.println("File:" + chrome);
         service = new ChromeDriverService.Builder()
                 .usingDriverExecutable(chrome)
                 .usingAnyFreePort()
@@ -56,32 +61,79 @@ public class PriceTest extends Assert {
 
     @Before
     public void setUp() throws Exception {
-        System.out.println();
-        System.out.println("BeforeClass SetUp!!!");
+        System.out.println("setUp");
         driver = new RemoteWebDriver(service.getUrl(),
                 DesiredCapabilities.chrome());
 
         driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
 
-        Enter = new Button(driver,HTMLElement.SearchBy.CSS_SELECTOR,Locators.get("LoginPage.loginButton"));
-        loginForm = new LogInForm(driver,HTMLElement.SearchBy.CSS_SELECTOR,Locators.get("LoginPage.Form"));
+        tabRecommend = new TabRecommend(driver);
+        tabAdditional = new TabAdditional(driver);
+        tabDbAccess = new TabDbAccess(driver);
+        tabAssessments = new TabAssessments(driver);
+        tabPublications = new TabPublications(driver);
+
+        pricePage = new PricePage(driver);
+        priceCart = new PriceCart(driver);
     }
 
     @After
     public void tearDown() throws Exception {
+        System.out.println();
+        System.out.println("tearDown");
         driver.quit();
     }
 
     @AfterClass
-    public static void createAndStopService() {
+    public static void StopService() {
+        System.out.println();
+        System.out.println("StopService");
         service.stop();
     }
 
 
-    @Test
+    @Ignore @Test
     public void testBase() throws InterruptedException {
-        driver.get( ConfigValue.getValue(SITE) );
+        pricePage.goTo();
+        tabRecommend.goTo();
+        assertEquals(Locators.getValue("Price.Recommended.Name"), tabRecommend.getTitle());
+        Thread.sleep(1000);
+        tabAdditional.goTo();
+        assertEquals(Locators.getValue("Price.Additional.Name"),  tabAdditional.getTitle());
+        Thread.sleep(1000);
+        tabAssessments.goTo();
+        assertEquals(Locators.getValue("Price.Assessments.Name"),   tabAssessments.getTitle());
+        Thread.sleep(1000);
+        tabDbAccess.goTo();
+        assertEquals(Locators.getValue("Price.Dbaccess.Name"),   tabDbAccess.getTitle());
+        Thread.sleep(1000);
+        tabPublications.goTo();
+        assertEquals(Locators.getValue("Price.Publications.Name"),   tabPublications.getTitle());
+        Thread.sleep(1000);
+    }
+
+    @Test
+    public void testTabRecommend() throws InterruptedException {
+        pricePage.goTo();
+        priceCart.findCartElements();
+
+        tabRecommend.goTo();
+        tabRecommend.findBoxElements();
+
+     //   tabRecommend.getBoxsInfo();
+     //   tabRecommend.getBoxInfo(0);
+     //   tabRecommend.getBoxInfo(1);
+
+        assertEquals(Locators.getValue("Price.Cart.Tittle.Empty"),   priceCart.getActualTittle());
+        tabRecommend.clickBoxButton(0);
+        //FIXME иногда не успевает обновиться значение загаловка для корзины.
+        assertEquals(Locators.getValue("Price.Cart.Tittle.Full"),   priceCart.getActualTittle());
+        tabRecommend.clickBoxButton(1);
+        assertEquals(Locators.getValue("Price.Cart.Tittle.Full"),   priceCart.getActualTittle());
+
+        Thread.sleep(3000);
+
     }
 
 }

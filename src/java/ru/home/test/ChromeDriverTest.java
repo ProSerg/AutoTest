@@ -12,6 +12,7 @@ import ru.home.common.Locators;
 import ru.home.common.TestParameters;
 import ru.home.core.*;
 import ru.home.objects.LogInForm;
+import ru.home.objects.TabRecommend;
 
 import java.io.File;
 import java.io.IOException;

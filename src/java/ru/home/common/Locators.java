@@ -3,16 +3,17 @@ package ru.home.common;
 import org.openqa.selenium.By;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
  * Created by smarkin on 12.03.2016.
  */
-public class Locators {
+public class Locators  {
     private static final Properties locators;
     private static final String resource = "/locators.properties";
 
-    private enum LocatorType {
+    private enum LocatorType  {
         id, name, css, xpath, tag, text, partText;
     }
 
@@ -20,14 +21,14 @@ public class Locators {
       locators = new Properties();
         InputStream is = Locators.class.getResourceAsStream(resource);
         try {
-            locators.load(is);
+            locators.load(new InputStreamReader(is,"CP1251"));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static String title(String pageName) {
-        return locators.getProperty(pageName);
+    public static String getValue(String Name) {
+        return locators.getProperty(Name);
     }
 
     public static String get(String locatorName) {
