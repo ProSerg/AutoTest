@@ -10,7 +10,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.home.common.ConfigValue;
 import ru.home.common.Locators;
 import ru.home.common.TestParameters;
-import ru.home.core.Page;
 import ru.home.objects.*;
 
 import java.io.File;
@@ -34,6 +33,7 @@ public class PriceTest extends Assert {
     PriceCart priceCart;
 
     PricePage pricePage;
+
 
     public  PriceTest(String name,String pass, String expected) {
         this.inputLogin = name;
@@ -121,19 +121,26 @@ public class PriceTest extends Assert {
         tabRecommend.goTo();
         tabRecommend.findBoxElements();
 
-     //   tabRecommend.getBoxsInfo();
-     //   tabRecommend.getBoxInfo(0);
-     //   tabRecommend.getBoxInfo(1);
+        priceCart.getTittlesInfo();
+        assertEquals(Locators.getValue("Price.Cart.Tittle.Empty"),   priceCart.getActualTittle().getText());
+        assertEquals(true,    priceCart.isActualTittle(priceCart.CART_EMPTY) );
+        assertEquals(true,    priceCart.isHiddenTittle(priceCart.CART_FULL) );
 
-        assertEquals(Locators.getValue("Price.Cart.Tittle.Empty"),   priceCart.getActualTittle());
+        tabRecommend.multiClickBoxButton(0, 10);
+        tabRecommend.multiClickBoxButton(1, 10);
         tabRecommend.clickBoxButton(0);
-        //FIXME иногда не успевает обновиться значение загаловка для корзины.
-        assertEquals(Locators.getValue("Price.Cart.Tittle.Full"),   priceCart.getActualTittle());
         tabRecommend.clickBoxButton(1);
-        assertEquals(Locators.getValue("Price.Cart.Tittle.Full"),   priceCart.getActualTittle());
+        System.out.println("Coast: " + priceCart.getTotalCoast());
+        //FIXME иногда не успевает обновиться значение загаловка для корзины. Для
+        //TODO Для этого нужно поправить HTMLElements.findElements
+        Thread.sleep(1000);
+
+        priceCart.getTittlesInfo();
+        assertEquals(Locators.getValue("Price.Cart.Tittle.Full"), priceCart.getActualTittle().getText());
+        assertEquals(true,    priceCart.isActualTittle(priceCart.CART_FULL) );
+        assertEquals(true,    priceCart.isHiddenTittle(priceCart.CART_EMPTY) );
 
         Thread.sleep(3000);
-
     }
 
 }
