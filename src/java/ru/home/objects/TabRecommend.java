@@ -5,11 +5,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import ru.home.common.Locators;
-import ru.home.core.Button;
 import ru.home.core.HTMLElement;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -51,10 +48,10 @@ public class TabRecommend extends HTMLElement {
         System.out.println("Boxs Info size:" + size);
         for (WebElement e:
                 BoxElements) {
+            System.out.println("####################");
             System.out.println("Tiitle: " + e.findElement(By.xpath(FORM_BOX_TITTLE)).getText() );
             System.out.println("Money: " + e.findElement(By.xpath(FORM_BOX_MONEY)).getText());
             System.out.println("Button: " + e.findElement(By.xpath(FORM_BOX_BUTTON)).getText());
-            System.out.println("####################");
         }
         return size;
     }
@@ -121,8 +118,17 @@ public class TabRecommend extends HTMLElement {
     public void clickBoxButton(int index) {
         WebElement e = getBoxButton(index);
         if (e != null ) {
-            e.click();
-            e.click();
+            e.click(); //TODO на некоторых браузерах click только выберает объект. Требуется двойной клиск
+        }else {
+            System.out.println("clickBoxButton: Not found button");
+        }
+    }
+
+    public void multiClickBoxButton(int index, int count) {
+        WebElement e = getBoxButton(index);
+        if (e != null ) {
+            while( count-- >= 0)
+                e.click(); //TODO на некоторых браузерах click только выберает объект. Требуется двойной клиск
         }else {
             System.out.println("clickBoxButton: Not found button");
         }
