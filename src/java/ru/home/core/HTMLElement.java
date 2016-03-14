@@ -6,7 +6,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -145,6 +144,7 @@ public class HTMLElement extends By {
         }
     }
 
+    //TODO выправить эту функцию, чтобы получить на выходе List<HTMLElement>
     @Override
     public List<WebElement> findElements(final SearchContext searchContext) {
         return driver.findElements(locator);
