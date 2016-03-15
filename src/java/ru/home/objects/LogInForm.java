@@ -5,7 +5,7 @@ import ru.home.common.Locators;
 import ru.home.core.Button;
 import ru.home.core.Form;
 import ru.home.core.Input;
-import ru.home.core.Label;
+import ru.home.core.Title;
 
 
 /**
@@ -19,12 +19,12 @@ public class LogInForm extends Form {
 
     Input InputUsername;
     Input InputPassword;
-    Label logError;
+    Title logError;
     Button button;
 
     public LogInForm(WebDriver driver, SearchBy elementSearchCriteria,  String elementValue) {
         super(driver,elementSearchCriteria,elementValue);
-        logError = new Label(driver,elementSearchCriteria,ERROR_SELECTOR);
+        logError = new Title(driver,elementSearchCriteria,ERROR_SELECTOR);
         InputUsername = new Input(driver,elementSearchCriteria,USERNAME_SELECTOR);
         InputPassword = new Input(driver,elementSearchCriteria,PASSWORD_SELECTOR);
         button = new Button(driver,elementSearchCriteria,BUTTON_SELECTOR);

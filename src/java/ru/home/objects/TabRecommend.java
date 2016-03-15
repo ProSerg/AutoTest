@@ -25,6 +25,10 @@ public class TabRecommend extends HTMLElement {
     HTMLElement FormBox;
     List<WebElement> BoxElements;
 
+
+    final static public int LeftButton =0;
+    final static public int RightButton =1;
+
     public TabRecommend(WebDriver driver) {
         super(driver, HTMLElement.SearchBy.CSS_SELECTOR, LOCATOR);
         FormBox = new HTMLElement(getDriver(),HTMLElement.SearchBy.CSS_SELECTOR,FORM_LOCATOR);
@@ -55,6 +59,8 @@ public class TabRecommend extends HTMLElement {
         }
         return size;
     }
+
+
 
     public WebElement getBoxElements(int index)  {
         WebElement e;
@@ -128,8 +134,8 @@ public class TabRecommend extends HTMLElement {
         WebElement e = getBoxButton(index);
         if (e != null ) {
             while( count-- >= 0)
-                e.click(); //TODO на некоторых браузерах click только выберает объект. Требуется двойной клиск
-        }else {
+                e.click();
+        } else {
             System.out.println("clickBoxButton: Not found button");
         }
     }

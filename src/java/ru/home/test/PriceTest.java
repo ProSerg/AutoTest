@@ -116,29 +116,26 @@ public class PriceTest extends Assert {
     @Test
     public void testTabRecommend() throws InterruptedException {
         pricePage.goTo();
-        priceCart.findCartElements();
-
         tabRecommend.goTo();
+
+       // priceCart.findCartElements();
         tabRecommend.findBoxElements();
 
-        priceCart.getTittlesInfo();
-        assertEquals(Locators.getValue("Price.Cart.Tittle.Empty"),   priceCart.getActualTittle().getText());
-        assertEquals(true,    priceCart.isActualTittle(priceCart.CART_EMPTY) );
-        assertEquals(true,    priceCart.isHiddenTittle(priceCart.CART_FULL) );
+        assertEquals(Locators.getValue("Price.Cart.Tittle.Empty"),   priceCart.getActualTittle());
+        assertTrue(priceCart.isDisplayedEmpty() );
+        assertFalse(priceCart.isDisplayedFull() );
 
-        tabRecommend.multiClickBoxButton(0, 10);
-        tabRecommend.multiClickBoxButton(1, 10);
-        tabRecommend.clickBoxButton(0);
-        tabRecommend.clickBoxButton(1);
+        tabRecommend.multiClickBoxButton(TabRecommend.LeftButton, 10);
+        tabRecommend.multiClickBoxButton(TabRecommend.RightButton, 10);
+
         System.out.println("Coast: " + priceCart.getTotalCoast());
-        //FIXME иногда не успевает обновиться значение загаловка для корзины. Для
-        //TODO Для этого нужно поправить HTMLElements.findElements
-        Thread.sleep(1000);
 
-        priceCart.getTittlesInfo();
-        assertEquals(Locators.getValue("Price.Cart.Tittle.Full"), priceCart.getActualTittle().getText());
-        assertEquals(true,    priceCart.isActualTittle(priceCart.CART_FULL) );
-        assertEquals(true,    priceCart.isHiddenTittle(priceCart.CART_EMPTY) );
+        assertEquals(Locators.getValue("Price.Cart.Tittle.Full"), priceCart.getActualTittle());
+        assertFalse(priceCart.isDisplayedEmpty() );
+        assertTrue(priceCart.isDisplayedFull() );
+
+       // assertEquals(priceCart.getDriver().getTitle(), priceCart.clickPayment().getName());
+        priceCart.findCartElements();
 
         Thread.sleep(3000);
     }
