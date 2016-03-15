@@ -6,6 +6,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -14,6 +16,23 @@ import java.util.function.Function;
 /**
  * Created by smarkin on 24.02.2016.
  *
+ */
+
+/*
+
+        driver.wait(function() {
+        return driver.findElement(target).click().then(
+            function(click) { return true },
+            function(err) {
+                if (err = StaleElementReferenceError) {
+                    return false;
+                } else {
+                    throw err;
+                }
+            }
+        );
+    }, 10000);
+
  */
 
 public class HTMLElement extends By {
@@ -35,11 +54,13 @@ public class HTMLElement extends By {
     private String elementValue;
     private SearchBy elementSearchCriteria;
     private WebDriver driver;
+    private WebElement element;
 
     private static final long DEFAULT_TIMEOUT = 5;
 
 
     public HTMLElement(final WebDriver driver, SearchBy elementSearchCriteria, String elementValue) {
+        super();
         this.elementSearchCriteria = elementSearchCriteria;
         this.elementValue = elementValue;
         this.driver = driver;
@@ -56,8 +77,13 @@ public class HTMLElement extends By {
         return locator;
     }
 
+    public void refreshElement () {
+        if(element == null )
+            element = driver.findElement(locator);
+    }
     public WebElement getElement () {
-        return driver.findElement(locator);
+        refreshElement();
+        return element;
     }
 
     public WebDriver getDriver() {
@@ -73,9 +99,25 @@ public class HTMLElement extends By {
     }
 
     public boolean isEnabled() {
-        return waitUntil(ExpectedConditions::visibilityOfElementLocated).isEnabled();
+        return getElement().isEnabled();
     }
 
+    public boolean isDisplayed() {
+        return getElement().isDisplayed();
+    }
+
+    public String getText() {
+        return getElement().getText();
+    }
+
+    public boolean isEnabledUntil() {
+        return waitUntil(ExpectedConditions::visibilityOfElementLocated).isEnabled();
+    }
+/*
+    public boolean isDisplayed() {
+        return waitUntil(ExpectedConditions::).isDisplayed();
+    }
+*/
     public boolean isRefreshed (String text) {
         try {
             wait.until(ExpectedConditions.refreshed(ExpectedConditions.invisibilityOfElementWithText(getLocator(),text)));
@@ -106,7 +148,8 @@ public class HTMLElement extends By {
         try {
             return getWait(timeout).until(condition.apply(getLocator()));
         } catch (Exception e) {
-            throw new AssertionError("Unable to find element by " + getElementSearchCriteria() + " = \"" + getElementValue() + "\"", e);
+            //throw new AssertionError("Unable to find element by " + getElementSearchCriteria() + " = \"" + getElementValue() + "\"", e);
+            return null;
         }
     }
 
@@ -147,6 +190,7 @@ public class HTMLElement extends By {
     //TODO выправить эту функцию, чтобы получить на выходе List<HTMLElement>
     @Override
     public List<WebElement> findElements(final SearchContext searchContext) {
-        return driver.findElements(locator);
+        return new ArrayList<>();
     }
+
 }

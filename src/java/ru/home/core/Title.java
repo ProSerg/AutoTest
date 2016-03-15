@@ -6,13 +6,13 @@ package ru.home.core;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-public class Label extends HTMLElement {
+public class Title extends HTMLElement {
 
-    public Label(final WebDriver driver, final SearchBy elementSearchCriteria, final String elementValue) {
+    public Title(final WebDriver driver, final SearchBy elementSearchCriteria, final String elementValue) {
         super(driver, elementSearchCriteria, elementValue);
     }
 
-    public String getText() {
+    public String getTextUntil() {
         return waitUntil(ExpectedConditions::visibilityOfElementLocated).getText();
     }
 }
