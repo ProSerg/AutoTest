@@ -18,23 +18,6 @@ import java.util.function.Function;
  *
  */
 
-/*
-
-        driver.wait(function() {
-        return driver.findElement(target).click().then(
-            function(click) { return true },
-            function(err) {
-                if (err = StaleElementReferenceError) {
-                    return false;
-                } else {
-                    throw err;
-                }
-            }
-        );
-    }, 10000);
-
- */
-
 public class HTMLElement extends By {
 
     public enum SearchBy {
