@@ -1,9 +1,9 @@
 package ru.home.objects;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.home.core.Button;
 import ru.home.core.HTMLElement;
 import ru.home.core.Title;
@@ -18,25 +18,31 @@ public class ItemPrice {
 
     private String Name;
     private WebElement elementRoot;
-    private WebElement elementTitle;
-    private WebElement elementPrice;
     private By locatorRoot;
 
     final private String LOCATOR_TITLE="label/span/span";
     final private String LOCATOR_PRICE="label/span[@class=\"price-cart__actual-cost\"]/span";
     final private String LOCATOR_BUTTON="span/small";
+    final private int TIMEOUT=5;
+
+    private WebDriverWait wait;
 
     ItemPrice (WebDriver driver,WebElement elementRoot, String Name) {
         this.driver = driver;
         this.elementRoot = elementRoot;
         this.Name = Name;
+
+        wait = (WebDriverWait) new WebDriverWait(this.driver, TIMEOUT)
+                .ignoring(StaleElementReferenceException.class);
     }
 
-    ItemPrice (WebDriver driver,By locatorRoot, String Name) {
+    ItemPrice (WebDriver driver,WebElement elementRoot) {
         this.driver = driver;
-        this.locatorRoot = locatorRoot;
-        this.Name = Name;
-        refresh();
+        this.elementRoot = elementRoot;
+        this.Name = "item";
+
+        wait = (WebDriverWait) new WebDriverWait(this.driver, TIMEOUT)
+                .ignoring(StaleElementReferenceException.class);
     }
 
     public void refresh() {
@@ -44,29 +50,54 @@ public class ItemPrice {
     }
 
     public String getTitle() {
-        try {
-            if(elementTitle == null)
-                elementTitle = elementRoot.findElement(By.xpath(LOCATOR_TITLE));
-            return elementTitle.getText();
-        } catch (StaleElementReferenceException e) {
-            elementTitle = elementRoot.findElement(By.xpath(LOCATOR_TITLE));
-            return elementTitle.getText();
-        }
+        if ( WaitUntil (By.xpath(LOCATOR_TITLE)) )
+            return elementRoot.findElement(By.xpath(LOCATOR_TITLE)).getText();
+        return null;
     }
 
     public String getPrice() {
+        if ( WaitUntil (By.xpath(LOCATOR_PRICE)) )
+            return elementRoot.findElement(By.xpath(LOCATOR_PRICE)).getText();
+        return null;
+    }
+
+    public boolean WaitUntil (By by) {
+        boolean flag;
         try {
-            if(elementPrice == null)
-                elementPrice = elementRoot.findElement(By.xpath(LOCATOR_PRICE));
-            return elementPrice.getText();
-        } catch (StaleElementReferenceException e) {
-            elementPrice = elementRoot.findElement(By.xpath(LOCATOR_TITLE));
-            return  elementPrice.getText();
+            flag = wait.until(new ExpectedCondition<Boolean>() {
+                @Override
+                public Boolean apply(WebDriver webDriver) {
+                    WebElement element = elementRoot.findElement(By.xpath(LOCATOR_BUTTON));
+                    return element != null && element.isDisplayed();
+                }
+            });
+            return true;
+        }catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    public boolean WaitRemove (WebElement element) {
+        boolean flag;
+        try {
+            return wait.until(ExpectedConditions.stalenessOf(element));
+        }catch (TimeoutException e) {
+            return false;
         }
     }
 
     public void remove() {
-        elementRoot.findElement(By.xpath(LOCATOR_BUTTON)).click();
+        WebElement element;
+        if ( WaitUntil (By.xpath(LOCATOR_BUTTON)) ) {
+            element = elementRoot.findElement(By.xpath(LOCATOR_BUTTON));
+            element.click();
+            WaitRemove(element);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return String.format( "%s : %s", getTitle(), getPrice());
     }
 
 }

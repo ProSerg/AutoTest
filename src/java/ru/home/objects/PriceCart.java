@@ -32,6 +32,7 @@ public class PriceCart extends HTMLElement {
 
     final static public String CART_FULL = "cart-full";
     final static public String CART_EMPTY = "cart-empty";
+    ItemContainer container;
 
     List<WebElement> BoxElements;
     Title FullTitle;
@@ -41,6 +42,7 @@ public class PriceCart extends HTMLElement {
     Title TotalCoast;
 
     ItemPrice itemPrice;
+    String locateBox = "body > div.HH-MainContent > div.g-row.m-row_content > div > div.b-price2 > div.price-content > div.g-col4 > div > div > div:nth-child(3) > div.price-cart__contents > ol.price-cart__items.HH-PriceCart-Items_specialOffer";
 
     Page Payment;
 
@@ -54,56 +56,17 @@ public class PriceCart extends HTMLElement {
         FullTitle = new Title(driver, SearchBy.CSS_SELECTOR, TITLE_FULL_LOCATOR);
         EmptyTitle = new Title(driver, SearchBy.CSS_SELECTOR, TITLE_EMPTY_LOCATOR);
         TotalCoast = new Title(driver, SearchBy.CSS_SELECTOR, BOX_TOTALCOAST);
+        container = new ItemContainer(getDriver(),By.cssSelector(locateBox));
     }
 
-    public void findCartElements() throws InterruptedException {
-        String locateBox = "body > div.HH-MainContent > div.g-row.m-row_content > div > div.b-price2 > div.price-content > div.g-col4 > div > div > div:nth-child(3) > div.price-cart__contents > ol.price-cart__items.HH-PriceCart-Items_specialOffer";
-        WebElement rootList = getDriver().findElement(By.cssSelector(locateBox));
-        System.out.println("Value:" + rootList.getTagName());
-        List<WebElement> list;
-        List<WebElement> list2;
-        List<ItemPrice> items = new ArrayList<>();
-        List<ItemPrice> items2 = new ArrayList<>();
-        list = rootList.findElements(By.xpath("li[@class=\"price-cart__item\"]"));
-        System.out.println("Size:" + list.size());
-
-        for (WebElement el : list) {
-            items.add(new ItemPrice(getDriver(), el, "First"));
-        }
-
-        for (ItemPrice it : items) {
-            System.out.println("Value:" + it.getTitle());
-            System.out.println("Price:" + it.getPrice());
-        }
-
-        items.get(1).remove();
-        items.remove(1);
-
-
-        waitForElementPresent(By.cssSelector(locateBox), 10);
-
-        WebElement againList = getDriver().findElement(By.cssSelector(locateBox));
-        list2 = rootList.findElements(By.xpath("li[@class=\"price-cart__item\"]"));
-        System.out.println("Size:" + list.size());
-
-        for (WebElement el : list2) {
-            items2.add(new ItemPrice(getDriver(), el, "First"));
-        }
-
-
-        System.out.println("Items List2");
-        for (ItemPrice it : items2) {
-            System.out.println("Value:" + it.getTitle());
-            System.out.println("Price:" + it.getPrice());
-        }
-
-        items2.get(0).remove();
-        items2.remove(0);
-
-        waitForElementPresent(By.cssSelector(locateBox), 10);
-
+    public ItemContainer findCartElements() throws InterruptedException {
+        container.refresh();
+        return container;
     }
 
+    public ItemContainer getContainer() {
+        return container;
+    }
 
     public boolean isDisplayedFull() {
         return FullTitle.isDisplayed();
@@ -121,9 +84,24 @@ public class PriceCart extends HTMLElement {
         return null;
     }
 
+    public boolean isCoast() {
+        String total = getTotalCoast().replace(" ","");
+        return total.equals(calcPrice());
+    }
+
+    public String calcPrice() {
+        int sum = 0;
+        for (ItemPrice item:
+                container.getContainer()) {
+            sum += Integer.parseInt(item.getPrice().replace(" ",""));
+        }
+        return String.format("%d",sum);
+    }
 
     public String getTotalCoast() {
-        return TotalCoast.getTextUntil();
+        if( TotalCoast.isDisplayed() )
+            return TotalCoast.getTextUntil();
+        return null;
     }
 
     public Page clickPayment() {
@@ -135,14 +113,13 @@ public class PriceCart extends HTMLElement {
     public void waitForElementPresent(final By by, int timeout) {
         WebDriverWait wait = (WebDriverWait) new WebDriverWait(getDriver(), timeout)
                 .ignoring(StaleElementReferenceException.class);
-        wait.until(new ExpectedCondition<Boolean>() {
+
+        boolean flag = wait.until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver webDriver) {
                 WebElement element = webDriver.findElement(by);
                 return element != null && element.isDisplayed();
             }
         });
-
-
     }
 }

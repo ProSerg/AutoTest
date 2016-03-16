@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.home.common.Locators;
 import ru.home.core.HTMLElement;
 
@@ -19,19 +20,38 @@ public class TabRecommend extends HTMLElement {
     final static private String LOCATOR=Locators.get("Price.Recommended");
     final static private String FORM_LOCATOR=Locators.get("Price.Recommended.Form");
     final static private String FORM_BOX_LOCATOR=Locators.get("Price.Recommended.Form.Box");
-    final static private String FORM_BOX_TITTLE=Locators.get("Price.Recommended.Form.Box.Tittle");
+    final static private String FORM_BOX_TITLE=Locators.get("Price.Recommended.Form.Box.Title");
+    final static private String FORM_BOX_TITLE_BUY=Locators.get("Price.Recommended.Form.Box.Title.Buy");
+    final static private String FORM_BOX_TITLE_BUYR=Locators.get("Price.Recommended.Form.Box.Title.Buy.Right");
     final static private String FORM_BOX_MONEY=Locators.get("Price.Recommended.Form.Box.Money");
     final static private String FORM_BOX_BUTTON=Locators.get("Price.Recommended.Form.Box.Button");
+    final static private int DEFAULT_TIMEOUT = 5 ;
+    WebDriverWait wait;
     HTMLElement FormBox;
     List<WebElement> BoxElements;
 
+    public enum IdButton {
+        Left,
+        Right
+    }
 
-    final static public int LeftButton =0;
-    final static public int RightButton =1;
+    private int convertID (IdButton ID) {
+        int id = -1;
+        switch (ID) {
+            case Left:
+                id = 0;
+                break;
+            case Right:
+                id =1;
+                break;
+        }
+        return id;
+    }
 
     public TabRecommend(WebDriver driver) {
         super(driver, HTMLElement.SearchBy.CSS_SELECTOR, LOCATOR);
         FormBox = new HTMLElement(getDriver(),HTMLElement.SearchBy.CSS_SELECTOR,FORM_LOCATOR);
+        wait = new WebDriverWait(driver, DEFAULT_TIMEOUT);
     }
 
     public void goTo () {
@@ -53,17 +73,23 @@ public class TabRecommend extends HTMLElement {
         for (WebElement e:
                 BoxElements) {
             System.out.println("####################");
-            System.out.println("Tiitle: " + e.findElement(By.xpath(FORM_BOX_TITTLE)).getText() );
+            System.out.println("Tiitle: " + e.findElement(By.xpath(FORM_BOX_TITLE_BUY)).getText() );
             System.out.println("Money: " + e.findElement(By.xpath(FORM_BOX_MONEY)).getText());
             System.out.println("Button: " + e.findElement(By.xpath(FORM_BOX_BUTTON)).getText());
         }
         return size;
     }
 
+    public boolean isButtonEnabled(IdButton ID ) {
+        return this.getBoxButton(ID).isEnabled();
+    }
 
 
-    public WebElement getBoxElements(int index)  {
+
+    private WebElement getBoxElements(int index)  {
         WebElement e;
+        if(index < 0 )
+            return null;
         try {
             e = BoxElements.get(index);
         } catch (Exception exept ) {
@@ -73,36 +99,37 @@ public class TabRecommend extends HTMLElement {
         return e;
     }
 
-    public void getBoxInfo(int index) {
+    public void getBoxInfo(IdButton ID) {
         WebElement e;
         try {
-            e = getBoxElements(index);
+            e = getBoxElements(convertID(ID));
         } catch (Exception expext) {
             System.out.printf("getBoxInfo: out\n");
             return;
         }
-        System.out.printf("BoxInfo(%d)", index);
-        System.out.println("Tiitle: " + e.findElement(By.xpath(FORM_BOX_TITTLE)).getText() );
+        System.out.printf("BoxInfo(%d)", convertID(ID));
+        System.out.println("Tiitle: " + e.findElement(By.xpath(FORM_BOX_TITLE_BUY)).getText() );
         System.out.println("Money: " + e.findElement(By.xpath(FORM_BOX_MONEY)).getText());
         System.out.println("Button: " + e.findElement(By.xpath(FORM_BOX_BUTTON)).getText());
         System.out.println("####################");
     }
 
-    public String  getBoxTittle(int index) {
+    public String  getBoxTittle(IdButton ID) {
         WebElement e;
         try {
-            e = getBoxElements(index);
+            e = getBoxElements(convertID(ID));
         } catch (Exception expext) {
             System.out.printf("getBoxTittle: out\n");
             return null;
         }
-        return e.findElement(By.xpath(FORM_BOX_TITTLE)).getText();
+        if (IdButton.Left == ID )
+            return e.findElement(By.xpath(FORM_BOX_TITLE_BUY)).getText();
+        return e.findElement(By.xpath(FORM_BOX_TITLE_BUYR)).getText();
     }
-
-    public String getBoxMoney(int index) {
+    public String getBoxMoney(IdButton ID) {
         WebElement e;
         try {
-            e = getBoxElements(index);
+            e = getBoxElements(convertID(ID));
         } catch (Exception expext) {
             System.out.printf("getBoxMoney: out\n");
             return null;
@@ -110,10 +137,10 @@ public class TabRecommend extends HTMLElement {
         return e.findElement(By.xpath(FORM_BOX_MONEY)).getText();
     }
 
-    public WebElement getBoxButton(int index) {
+    public WebElement getBoxButton(IdButton ID) {
         WebElement e;
         try {
-            e = getBoxElements(index);
+            e = getBoxElements(convertID(ID));
         } catch (Exception expext) {
             System.out.printf("getBoxButton: out\n");
             return null;
@@ -121,20 +148,23 @@ public class TabRecommend extends HTMLElement {
         return e.findElement(By.xpath(FORM_BOX_BUTTON));
     }
 
-    public void clickBoxButton(int index) {
-        WebElement e = getBoxButton(index);
+    public void clickBoxButton(IdButton ID) {
+        WebElement e = getBoxButton(ID);
         if (e != null ) {
-            e.click(); //TODO на некоторых браузерах click только выберает объект. Требуется двойной клиск
+            e.click();
+            wait.until(ExpectedConditions.not(ExpectedConditions.elementToBeClickable(e)));
         }else {
             System.out.println("clickBoxButton: Not found button");
         }
     }
 
-    public void multiClickBoxButton(int index, int count) {
-        WebElement e = getBoxButton(index);
+    public void multiClickBoxButton(IdButton ID, int count) {
+        WebElement e = getBoxButton(ID);
         if (e != null ) {
-            while( count-- >= 0)
+            while( count-- > 0) {
                 e.click();
+            }
+            wait.until(ExpectedConditions.not(ExpectedConditions.elementToBeClickable(e)));
         } else {
             System.out.println("clickBoxButton: Not found button");
         }
