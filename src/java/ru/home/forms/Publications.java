@@ -31,7 +31,7 @@ public class Publications extends HTMLElement {
         listContent = new ArrayList<>();
     }
 
-    public void goTo () throws InterruptedException {
+    public void goTo () {
         waitUntil(ExpectedConditions::elementToBeClickable).click();
     }
 

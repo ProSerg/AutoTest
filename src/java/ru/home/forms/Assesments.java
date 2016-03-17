@@ -22,7 +22,7 @@ public class Assesments extends HTMLElement {
         waitUntil(ExpectedConditions::elementToBeClickable).click();
     }
 
-    public String getTitle () throws InterruptedException {
+    public String getTitle ()  {
         return getElement().findElements(By.tagName("span")).get(0).getText();
     }
 

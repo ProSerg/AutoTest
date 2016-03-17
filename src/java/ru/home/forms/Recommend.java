@@ -69,7 +69,7 @@ public class Recommend extends HTMLElement {
         return init;
     }
 
-    public void goTo () throws InterruptedException {
+    public void goTo () {
         waitUntil(ExpectedConditions::elementToBeClickable).click();
         initRecommend();
     }
