@@ -1,6 +1,5 @@
 package ru.home.test;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -11,11 +10,13 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.home.common.ConfigValue;
 import ru.home.common.Locators;
 import ru.home.common.TestParameters;
+import ru.home.forms.*;
 import ru.home.objects.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(Parameterized.class)
@@ -26,20 +27,29 @@ public class PriceTest extends Assert {
     static File chrome;
     private String inputLogin,inputPass,expectedResult;
 
-    TabRecommend tabRecommend;
-    TabAdditional tabAdditional;
-    TabAssessments tabAssessments;
-    TabDbAccess tabDbAccess;
-    TabPublications tabPublications;
-    PriceCart priceCart;
 
     PricePage pricePage;
+
+    Publications tabPublications;
+    Recommend tabRecommend;
+    Access tabAccess;
+    Additional tabAdditional;
+    Assesments tabAssessments;
+    CartContainer cart;
 
 
     public  PriceTest(String name,String pass, String expected) {
         this.inputLogin = name;
         this.inputPass = pass;
         this.expectedResult = expected;
+    }
+
+    public static int randInt(int min, int max) {
+
+
+        Random rand = new Random();
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+        return randomNum;
     }
 
     @Parameterized.Parameters
@@ -69,14 +79,15 @@ public class PriceTest extends Assert {
         driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
 
-        tabRecommend = new TabRecommend(driver);
-        tabAdditional = new TabAdditional(driver);
-        tabDbAccess = new TabDbAccess(driver);
-        tabAssessments = new TabAssessments(driver);
-        tabPublications = new TabPublications(driver);
 
+        tabPublications = new Publications(driver);
+        tabRecommend = new Recommend(driver);
+        tabAccess = new Access(driver);
+        tabAdditional = new Additional(driver);
+        tabAssessments = new Assesments(driver);
+        cart = new CartContainer(driver);
         pricePage = new PricePage(driver);
-        priceCart = new PriceCart(driver);
+
     }
 
     @After
@@ -94,161 +105,186 @@ public class PriceTest extends Assert {
     }
 
 
-    @Ignore @Test
+    @Test
     public void testBase() throws InterruptedException {
         pricePage.goTo();
+        System.out.print("* Проверка перехода по кладкам  = > ");
         tabRecommend.goTo();
         assertEquals(Locators.getValue("Price.Recommended.Name"), tabRecommend.getTitle());
-        Thread.sleep(1000);
         tabAdditional.goTo();
         assertEquals(Locators.getValue("Price.Additional.Name"),  tabAdditional.getTitle());
-        Thread.sleep(1000);
         tabAssessments.goTo();
         assertEquals(Locators.getValue("Price.Assessments.Name"),   tabAssessments.getTitle());
-        Thread.sleep(1000);
-        tabDbAccess.goTo();
-        assertEquals(Locators.getValue("Price.Dbaccess.Name"),   tabDbAccess.getTitle());
-        Thread.sleep(1000);
+        tabAccess.goTo();
+        assertEquals(Locators.getValue("Price.Access.Name"),   tabAccess.getTitle());
         tabPublications.goTo();
         assertEquals(Locators.getValue("Price.Publications.Name"),   tabPublications.getTitle());
-        Thread.sleep(1000);
+        System.out.println("Ok");
     }
 
     @Test
-    public void testTabRecommend() throws InterruptedException {
-        ItemContainer container;
+    public void testPublications() throws InterruptedException {
         pricePage.goTo();
-        tabRecommend.goTo();
+        tabPublications.goTo();
+        System.out.println(tabPublications.getTitle());
+        tabPublications.initContent();
+        System.out.print("* Проверка добавления контента   = > ");
 
-        tabRecommend.findBoxElements();
+        tabPublications.addOrRefresh(Publications.standard);
+        tabPublications.addOrRefresh(Publications.stdPlus);
+        tabPublications.addOrRefresh(Publications.premium);
+        tabPublications.addOrRefresh(Publications.anonymous);
+        cart.refresh();
+        assertEquals(4,cart.size());
+        System.out.println("OK");
 
-        //Проверка титул пустой корзины
-        assertEquals(Locators.getValue("Price.Cart.Tittle.Empty"),   priceCart.getActualTittle());
-        assertTrue(priceCart.isDisplayedEmpty() );
-        assertFalse(priceCart.isDisplayedFull() );
+        System.out.print("* Проверка удаление контента и контроль суммы   = > ");
+        while (! cart.isEmpty() ) {
+            cart.removeItem(0);
+            cart.refresh();
+            if(!cart.isEmpty())
+                assertEquals(cart.getTotalCost(), cart.calcPrice()); //FIXME Expected : "" , Actual   :0
+        }
+        assertTrue(cart.isEmpty());
 
-        container = priceCart.findCartElements();
-        System.out.println(container.toString());
-        System.out.println("Coast: " + priceCart.getTotalCoast() );
-        //Проверка содержимой пустой корзины
-        assertTrue(container.isEmpty());
+        System.out.println("OK");
 
-        //проверка изменения статуса кнопки покупки "левой" до и после нажатия
-        assertTrue(tabRecommend.isButtonEnabled(TabRecommend.IdButton.Left) );
-        tabRecommend.multiClickBoxButton(TabRecommend.IdButton.Left, 1);
-        assertFalse(tabRecommend.isButtonEnabled(TabRecommend.IdButton.Left) );
-        //
+        System.out.print("* Проверка изменения контента и контроль суммы   = > ");
+        String coast;
 
-        container.refresh();
-        //Проверка содержимой не пустой корзины
-        assertTrue(!container.isEmpty());
+        tabPublications.addOrRefresh(Publications.standard);
+        coast = tabPublications.getPriceContent(Publications.standard);
+        tabPublications.setCountContent(Publications.standard,String.format("%d",randInt(-100, 100)) );
+        tabPublications.addOrRefresh(Publications.standard);
+        assertNotEquals(coast,tabPublications.getPriceContent(Publications.standard));
 
-  //      System.out.println(tabRecommend.getBoxTittle(TabRecommend.IdButton.Left));
-  //      System.out.println(container);
+        tabPublications.addOrRefresh(Publications.stdPlus);
+        coast = tabPublications.getPriceContent(Publications.stdPlus);
+        tabPublications.setCountContent(Publications.stdPlus,String.format("%d",randInt(-100, 100)) );
+        tabPublications.addOrRefresh(Publications.stdPlus);
+        assertNotEquals(coast,tabPublications.getPriceContent(Publications.stdPlus));
 
-        // сверка название товара с титулом из корзины
-        assertTrue(container.contains(tabRecommend.getBoxTittle(TabRecommend.IdButton.Left)));
-        //TODO сверка цены
-        //
+        tabPublications.addOrRefresh(Publications.premium);
+        coast = tabPublications.getPriceContent(Publications.premium);
+        tabPublications.setCountContent(Publications.premium,String.format("%d",randInt(-100, 100)) );
+        tabPublications.addOrRefresh(Publications.premium);
+        assertNotEquals(coast,tabPublications.getPriceContent(Publications.premium));
 
-        //проверка изменения статуса кнопки покупки "правой" до и после нажатия
-        assertTrue(tabRecommend.isButtonEnabled(TabRecommend.IdButton.Right) );
-        tabRecommend.multiClickBoxButton(TabRecommend.IdButton.Right, 1);
-        assertFalse(tabRecommend.isButtonEnabled(TabRecommend.IdButton.Right) );
-        //
+        tabPublications.addOrRefresh(Publications.anonymous);
+        coast = tabPublications.getPriceContent(Publications.anonymous);
+        tabPublications.setCountContent(Publications.anonymous,String.format("%d",randInt(-100, 100)) );
+        tabPublications.addOrRefresh(Publications.anonymous);
+        assertNotEquals(coast,tabPublications.getPriceContent(Publications.anonymous));
 
-        container.refresh();
-
-//        System.out.println("RButton:"+ tabRecommend.getBoxButton(TabRecommend.IdButton.Right).isEnabled() );
-//        System.out.println(container);
-
-        // сверка название товара с титулом из корзины
-        assertTrue(container.contains("Неделя доступа к базе резюме"));
-        //TODO сверка цены
-        //
-
-        //проверка суммы
-        System.out.println("Coast: " + priceCart.getTotalCoast());
-        System.out.println("Calculate: " + priceCart.calcPrice());
-        assertTrue(priceCart.isCoast());
-        //Проверка титула не пустой корзины
-        assertEquals(Locators.getValue("Price.Cart.Tittle.Full"), priceCart.getActualTittle());
-        assertFalse(priceCart.isDisplayedEmpty() );
-        assertTrue(priceCart.isDisplayedFull() );
-
-        //Проверка колличество покупок в корзине
-        assertEquals(2, container.size());
-
-        //System.out.println(container.toString());
-
-        //Удаление одной покупки в корзине
-        container.removeItem("Неделя доступа к базе резюме");
-        assertTrue(container.refresh());
-        assertTrue(tabRecommend.getBoxButton(TabRecommend.IdButton.Right).isEnabled() );
-
-        //Проверка колличество покупок в корзине
-        assertEquals(1, container.size());
-        System.out.println(container.toString());
-
-        //Удаление второй покупки в корзине
-        container.removeItem("Вакансия Стандарт+");
-        container.refresh();
-        assertTrue(tabRecommend.getBoxButton(TabRecommend.IdButton.Left).isEnabled() );
+        System.out.println("OK");
 
 
-        assertTrue(container.isEmpty());
-
-        //END
-/*
-        assertTrue(tabRecommend.isButtonEnabled(TabRecommend.IdButton.Left) );
-        tabRecommend.multiClickBoxButton(TabRecommend.IdButton.Left, 1);
-        assertFalse(tabRecommend.isButtonEnabled(TabRecommend.IdButton.Left) );
-
-        container.refresh();
-        assertTrue(!container.isEmpty());
-
-        System.out.println(tabRecommend.getBoxTittle(TabRecommend.IdButton.Left));
-        System.out.println(container);
-
-        assertTrue(container.contains(tabRecommend.getBoxTittle(TabRecommend.IdButton.Left)));
-
-        assertTrue(tabRecommend.isButtonEnabled(TabRecommend.IdButton.Right) );
-        tabRecommend.multiClickBoxButton(TabRecommend.IdButton.Right, 1);
-        assertFalse(tabRecommend.isButtonEnabled(TabRecommend.IdButton.Right) );
-
-
-        container.refresh();
-
-        System.out.println("RButton:"+ tabRecommend.getBoxButton(TabRecommend.IdButton.Right).isEnabled() );
-        System.out.println(container);
-
-        assertTrue(container.contains("Неделя доступа к базе резюме"));
-
-        System.out.println("Coast: " + priceCart.getTotalCoast());
-
-        assertEquals(Locators.getValue("Price.Cart.Tittle.Full"), priceCart.getActualTittle());
-        assertFalse(priceCart.isDisplayedEmpty() );
-        assertTrue(priceCart.isDisplayedFull() );
-
-        assertEquals(2, container.size());
-
-        System.out.println(container.toString());
-
-        container.removeItem("Неделя доступа к базе резюме");
-        assertTrue(container.refresh());
-        //Thread.sleep(1000);
-        assertTrue(tabRecommend.getBoxButton(TabRecommend.IdButton.Right).isEnabled() );
-
-        assertEquals(1, container.size());
-        System.out.println(container.toString());
-
-        container.removeItem("Вакансия Стандарт+");
-        container.refresh();
-        //Thread.sleep(1000);
-        assertTrue(tabRecommend.getBoxButton(TabRecommend.IdButton.Left).isEnabled() );
-
-        assertEquals(0, container.size());
-*/
     }
 
+    @Test
+    public void testAccess() throws InterruptedException {
+        pricePage.goTo();
+        tabAccess.goTo();
+        System.out.println(tabAccess.getTitle());
+
+        System.out.print("* Проверка добавления покупи   = > ");
+        tabAccess.addToCart();
+        cart.refresh();
+        assertEquals(1,cart.size());
+        System.out.println("OK");
+
+        System.out.print("* Проверка суммы покупки  = > ");
+        assertEquals(cart.getTotalCost(), cart.calcPrice());
+        System.out.println("OK");
+
+        System.out.print("* Проверка удаление покупи   = > ");
+        cart.removeItem(0);
+        cart.refresh();
+        assertEquals(0,cart.size());
+        System.out.println("OK");
+
+    }
+
+    @Test
+    public void testRecommend() throws InterruptedException {
+
+        pricePage.goTo();
+        tabRecommend.goTo();
+        System.out.println(tabRecommend);
+
+        System.out.print("* Проверка в разделк Recommend функционал покупи \"Вакансия Стандарт+\"  = > ");
+        //System.out.println();
+        assertTrue(tabRecommend.isEnabled(tabRecommend.OneStdPlus));
+        tabRecommend.addToCard( tabRecommend.OneStdPlus );
+        assertFalse(tabRecommend.isEnabled(tabRecommend.OneStdPlus));
+
+        cart.refresh();
+        assertEquals(1,cart.size());
+        assertEquals(tabRecommend.getItemPrice(tabRecommend.OneStdPlus),cart.getPrice(0));
+        System.out.println("OK");
+
+
+        System.out.print("* Проверка в разделк Recommend функционал покупи \"Неделя доступа к резюме в регионе\"  = > ");
+        assertTrue(tabRecommend.isEnabled(tabRecommend.SevenDay));
+        tabRecommend.addToCard( tabRecommend.SevenDay );
+        assertFalse(tabRecommend.isEnabled(tabRecommend.SevenDay));
+
+        cart.refresh();
+        assertEquals(2,cart.size());
+        assertEquals(tabRecommend.getItemPrice(tabRecommend.SevenDay),cart.getPrice(1));
+
+        System.out.println("OK");
+
+        System.out.print("* Проверка суммы покупки  = > ");
+        assertEquals(cart.getTotalCost(), cart.calcPrice());
+        System.out.println("OK");
+
+        System.out.print("* Проверка удаление покупи \"Неделя доступа к резюме в регионе\"  = > ");
+        cart.removeItem(1);
+        cart.refresh();
+        assertEquals(1,cart.size());
+        assertFalse(cart.contains("Неделя доступа к базе резюме"));
+        System.out.println("OK");
+
+        System.out.print("* Проверка удаление покупи \"Вакансия Стандарт+\"  = > ");
+        cart.removeItem(0);
+        cart.refresh();
+        assertEquals(0,cart.size());
+        assertFalse(cart.contains("Вакансия Стандарт+"));
+        System.out.println("OK");
+
+        Thread.sleep(3000);
+    }
+
+    /*
+    Иногда тест не проходит.
+     */
+
+    @Ignore @Test
+    public void testStrange() throws InterruptedException {
+        pricePage.goTo();
+        tabRecommend.goTo();
+        System.out.println(tabRecommend);
+
+        tabRecommend.getItem(tabRecommend.OneStdPlus).MultiClick(10);
+        tabRecommend.getItem(tabRecommend.SevenDay).MultiClick(10);
+        System.out.print("* Проверка многократного клика  = > ");
+        cart.refresh();
+        assertEquals(2,cart.size());
+        System.out.println("OK");
+        Thread.sleep(3000);
+    }
+
+    @Ignore @Test
+    public void testSpamAttack() throws InterruptedException {
+        pricePage.goTo();
+        tabAccess.goTo();
+        System.out.println(tabAccess.getTitle());
+
+        System.out.print("* Проверка добавления покупи   = > ");
+        int count = randInt(0,1000);
+        while(count-- > 0)
+            tabAccess.addToCart();
+        System.out.println("OK");
+    }
 }
