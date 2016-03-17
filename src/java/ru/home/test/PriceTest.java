@@ -107,7 +107,7 @@ public class PriceTest extends Assert {
     @Test
     public void testPayment() throws InterruptedException {
         pricePage.goTo();
-        System.out.print("* Проверка перехода на старницу оплаты без регистриации  = > ");
+        System.out.print("* Проверка перехода на страницу оплаты без регистрации  = > ");
         tabRecommend.goTo();
         assertEquals(Locators.getValue("Price.Recommended.Name"), tabRecommend.getTitle());
         tabRecommend.addToCard(tabRecommend.OneStdPlus);
@@ -118,7 +118,7 @@ public class PriceTest extends Assert {
     @Ignore @Test
     public void testBase() throws InterruptedException {
         pricePage.goTo();
-        System.out.print("* Проверка перехода по кладкам  = > ");
+        System.out.print("* Проверка перехода по вкладкам  = > ");
         tabRecommend.goTo();
         assertEquals(Locators.getValue("Price.Recommended.Name"), tabRecommend.getTitle());
         tabAdditional.goTo();
@@ -208,7 +208,7 @@ public class PriceTest extends Assert {
         assertEquals(cart.getTotalCost(), cart.calcPrice());
         System.out.println("OK");
 
-        System.out.print("* Проверка удаление покупи   = > ");
+        System.out.print("* Проверка удаление покупки  = > ");
         cart.removeItem(0);
         cart.refresh();
         assertEquals(0,cart.size());
@@ -223,7 +223,7 @@ public class PriceTest extends Assert {
         tabRecommend.goTo();
         System.out.println(tabRecommend);
 
-        System.out.print("* Проверка в разделе Recommend функционал покупи \"Вакансия Стандарт+\"  = > ");
+        System.out.print("* Проверка в разделе Recommend функционал покупки \"Вакансия Стандарт+\"  = > ");
         //System.out.println();
         assertTrue(tabRecommend.isEnabled(tabRecommend.OneStdPlus));
         tabRecommend.addToCard( tabRecommend.OneStdPlus );
@@ -235,7 +235,7 @@ public class PriceTest extends Assert {
         System.out.println("OK");
 
 
-        System.out.print("* Проверка в разделе Recommend функционал покупи \"Неделя доступа к резюме в регионе\"  = > ");
+        System.out.print("* Проверка в разделе Recommend функционал покупки \"Неделя доступа к резюме в регионе\"  = > ");
         assertTrue(tabRecommend.isEnabled(tabRecommend.SevenDay));
         tabRecommend.addToCard( tabRecommend.SevenDay );
         assertFalse(tabRecommend.isEnabled(tabRecommend.SevenDay));
