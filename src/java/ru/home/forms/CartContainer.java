@@ -2,6 +2,7 @@ package ru.home.forms;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.home.common.Locators;
 import ru.home.core.Button;
@@ -212,7 +213,12 @@ public class CartContainer {
     }
 
     public Page clickPayment() {
-        buttonPayment.click();
+        try {
+            buttonPayment.click();
+        } catch (NullPointerException e) {
+            return null;
+        }
+        wait.until(ExpectedConditions.titleIs(Locators.getValue("Payment.Site.Tittle")));
         return Payment;
     }
 
