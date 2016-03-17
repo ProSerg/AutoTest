@@ -104,8 +104,18 @@ public class PriceTest extends Assert {
         service.stop();
     }
 
-
     @Test
+    public void testPayment() throws InterruptedException {
+        pricePage.goTo();
+        System.out.print("* Проверка перехода на старницу оплаты без регистриации  = > ");
+        tabRecommend.goTo();
+        assertEquals(Locators.getValue("Price.Recommended.Name"), tabRecommend.getTitle());
+        tabRecommend.addToCard(tabRecommend.OneStdPlus);
+        cart.clickPayment();
+        System.out.println("Ok");
+    }
+
+    @Ignore @Test
     public void testBase() throws InterruptedException {
         pricePage.goTo();
         System.out.print("* Проверка перехода по кладкам  = > ");
@@ -116,17 +126,18 @@ public class PriceTest extends Assert {
         tabAssessments.goTo();
         assertEquals(Locators.getValue("Price.Assessments.Name"),   tabAssessments.getTitle());
         tabAccess.goTo();
-        assertEquals(Locators.getValue("Price.Access.Name"),   tabAccess.getTitle());
+        assertEquals(Locators.getValue("Price.Access.Name"), tabAccess.getTitle());
         tabPublications.goTo();
         assertEquals(Locators.getValue("Price.Publications.Name"),   tabPublications.getTitle());
         System.out.println("Ok");
     }
 
-    @Test
+    @Ignore @Test
     public void testPublications() throws InterruptedException {
         pricePage.goTo();
         tabPublications.goTo();
         System.out.println(tabPublications.getTitle());
+
         tabPublications.initContent();
         System.out.print("* Проверка добавления контента   = > ");
 
@@ -181,7 +192,7 @@ public class PriceTest extends Assert {
 
     }
 
-    @Test
+    @Ignore @Test
     public void testAccess() throws InterruptedException {
         pricePage.goTo();
         tabAccess.goTo();
@@ -205,7 +216,7 @@ public class PriceTest extends Assert {
 
     }
 
-    @Test
+    @Ignore @Test
     public void testRecommend() throws InterruptedException {
 
         pricePage.goTo();
@@ -270,7 +281,7 @@ public class PriceTest extends Assert {
         tabRecommend.getItem(tabRecommend.SevenDay).MultiClick(10);
         System.out.print("* Проверка многократного клика  = > ");
         cart.refresh();
-        assertEquals(2,cart.size());
+        assertEquals(2, cart.size());
         System.out.println("OK");
         Thread.sleep(3000);
     }
