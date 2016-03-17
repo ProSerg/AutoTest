@@ -198,7 +198,7 @@ public class PriceTest extends Assert {
         tabAccess.goTo();
         System.out.println(tabAccess.getTitle());
 
-        System.out.print("* Проверка добавления покупи   = > ");
+        System.out.print("* Проверка добавления покупки   = > ");
         tabAccess.addToCart();
         cart.refresh();
         assertEquals(1,cart.size());
@@ -223,7 +223,7 @@ public class PriceTest extends Assert {
         tabRecommend.goTo();
         System.out.println(tabRecommend);
 
-        System.out.print("* Проверка в разделк Recommend функционал покупи \"Вакансия Стандарт+\"  = > ");
+        System.out.print("* Проверка в разделе Recommend функционал покупи \"Вакансия Стандарт+\"  = > ");
         //System.out.println();
         assertTrue(tabRecommend.isEnabled(tabRecommend.OneStdPlus));
         tabRecommend.addToCard( tabRecommend.OneStdPlus );
@@ -235,7 +235,7 @@ public class PriceTest extends Assert {
         System.out.println("OK");
 
 
-        System.out.print("* Проверка в разделк Recommend функционал покупи \"Неделя доступа к резюме в регионе\"  = > ");
+        System.out.print("* Проверка в разделе Recommend функционал покупи \"Неделя доступа к резюме в регионе\"  = > ");
         assertTrue(tabRecommend.isEnabled(tabRecommend.SevenDay));
         tabRecommend.addToCard( tabRecommend.SevenDay );
         assertFalse(tabRecommend.isEnabled(tabRecommend.SevenDay));
@@ -250,14 +250,14 @@ public class PriceTest extends Assert {
         assertEquals(cart.getTotalCost(), cart.calcPrice());
         System.out.println("OK");
 
-        System.out.print("* Проверка удаление покупи \"Неделя доступа к резюме в регионе\"  = > ");
+        System.out.print("* Проверка удаление покупки \"Неделя доступа к резюме в регионе\"  = > ");
         cart.removeItem(1);
         cart.refresh();
         assertEquals(1,cart.size());
         assertFalse(cart.contains("Неделя доступа к базе резюме"));
         System.out.println("OK");
 
-        System.out.print("* Проверка удаление покупи \"Вакансия Стандарт+\"  = > ");
+        System.out.print("* Проверка удаление покупки \"Вакансия Стандарт+\"  = > ");
         cart.removeItem(0);
         cart.refresh();
         assertEquals(0,cart.size());
@@ -292,7 +292,7 @@ public class PriceTest extends Assert {
         tabAccess.goTo();
         System.out.println(tabAccess.getTitle());
 
-        System.out.print("* Проверка добавления покупи   = > ");
+        System.out.print("* Проверка добавления покупки   = > ");
         int count = randInt(0,1000);
         while(count-- > 0)
             tabAccess.addToCart();
